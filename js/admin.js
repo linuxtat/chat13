@@ -13,43 +13,7 @@ if (currentUserPhone !== "cactus" && isAdmin !== "true") {
   window.location.href = "index.html";
 }
 
-// ✅ সাইন আপ রিকোয়েস্ট লোড
-onValue(ref(db, "signupRequests"), (snapshot) => {
-  requestList.innerHTML = "";
-  snapshot.forEach((child) => {
-    const user = child.val();
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${user.name} (${user.phone}) 
-      <button onclick="approve('${user.phone}', '${user.name}')">✔️ Accept</button>
-      <button onclick="reject('${user.phone}')">❌ Reject</button>
-    `;
-    requestList.appendChild(li);
-  });
-});
-
-// ✅ ইউজার তালিকা লোড
-onValue(ref(db, "users"), (snapshot) => {
-  userList.innerHTML = "";
-  snapshot.forEach((child) => {
-    const user = child.val();
-    const li = document.createElement("li");
-
-    let adminButton = "";
-    if (user.phone === "cactus") {
-      adminButton = "<strong>মূল এডমিন</strong>";
-    } else if (user.isAdmin) {
-      adminButton = `<button onclick="removeAdmin('${user.phone}')">Remove Admin</button>`;
-    } else {
-      adminButton = `<button onclick="makeAdmin('${user.phone}')">Make Admin</button>`;
-    }
-
-    li.innerHTML = `${user.name} (${user.phone}) ${adminButton}`;
-    userList.appendChild(li);
-  });
-});
-
-// ✅ Approve Function
+// ✅ Approve Signup
 window.approve = async function (phone, name) {
   await set(ref(db, `users/${phone}`), {
     name,
@@ -59,7 +23,7 @@ window.approve = async function (phone, name) {
   await remove(ref(db, `signupRequests/${phone}`));
 };
 
-// ✅ Reject Function
+// ✅ Reject Signup
 window.reject = async function (phone) {
   await remove(ref(db, `signupRequests/${phone}`));
 };
@@ -81,3 +45,58 @@ window.removeAdmin = async function (phone) {
     isAdmin: false
   });
 };
+
+// ✅ Delete User
+window.deleteUser = async function (phone) {
+  if (phone === "cactus") {
+    alert("মূল এডমিনকে ডিলিট করা যাবে না!");
+    return;
+  }
+  if (confirm("আপনি কি এই ইউজারকে মুছে ফেলতে চান?")) {
+    await remove(ref(db, `users/${phone}`));
+  }
+}
+
+// ✅ Load Signup Requests
+onValue(ref(db, "signupRequests"), (snapshot) => {
+  requestList.innerHTML = "";
+  snapshot.forEach((child) => {
+    const user = child.val();
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${user.name} (${user.phone}) 
+      <button onclick="approve('${user.phone}', '${user.name}')">✔️ Accept</button>
+      <button onclick="reject('${user.phone}')">❌ Reject</button>
+    `;
+    requestList.appendChild(li);
+  });
+});
+
+// ✅ Load User List in Table
+onValue(ref(db, "users"), (snapshot) => {
+  userList.innerHTML = "";
+  snapshot.forEach((child) => {
+    const user = child.val();
+    const tr = document.createElement("tr");
+
+    let status = user.isAdmin ? "এডমিন" : "সাধারণ";
+    let actions = "";
+
+    if (user.phone === "cactus") {
+      actions = "<strong>মূল এডমিন</strong>";
+    } else {
+      actions += user.isAdmin
+        ? `<button onclick="removeAdmin('${user.phone}')">Remove Admin</button>`
+        : `<button onclick="makeAdmin('${user.phone}')">Make Admin</button>`;
+      actions += ` <button onclick="deleteUser('${user.phone}')">❌ Delete</button>`;
+    }
+
+    tr.innerHTML = `
+      <td>${user.name}</td>
+      <td>${user.phone}</td>
+      <td>${status}</td>
+      <td>${actions}</td>
+    `;
+    userList.appendChild(tr);
+  });
+});
