@@ -5,68 +5,69 @@ import {
   set,
   remove,
   push,
-  get
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const userName = localStorage.getItem("userName");
 const userPhone = localStorage.getItem("userPhone");
+const userName = localStorage.getItem("userName");
 const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-if (!userName || !userPhone || isAdmin) {
-  alert("এই পেজ কেবল সাধারণ ইউজারদের জন্য।");
+if (!userPhone || !userName) {
   window.location.href = "index.html";
 }
 
-document.getElementById("userName")?.textContent = userName;
-
 const userList = document.getElementById("userList");
 const chatBox = document.getElementById("chatBox");
-const chatWith = document.getElementById("chatWith");
 const messagesDiv = document.getElementById("messages");
-const chatInput = document.getElementById("chatInput");
-let chattingWith = null;
+const chatWith = document.getElementById("chatWith");
+let currentChatUser = null;
 
-// অনলাইন স্ট্যাটাস
+// ✅ Mark as online
 set(ref(db, `onlineUsers/${userPhone}`), true);
 window.addEventListener("beforeunload", () => {
   remove(ref(db, `onlineUsers/${userPhone}`));
 });
 
-// ইউজার লোড
-onValue(ref(db, "users"), async (snapshot) => {
-  const onlineSnap = await get(ref(db, "onlineUsers"));
-  const onlineList = onlineSnap.exists() ? Object.keys(onlineSnap.val()) : [];
+// ✅ Show users (excluding self & cactus)
+function loadUsers() {
+  onValue(ref(db, "users"), (snapshot) => {
+    const usersData = snapshot.val() || {};
+    onValue(ref(db, "onlineUsers"), (onlineSnap) => {
+      const online = onlineSnap.val() || {};
+      const users = [];
 
-  let users = [];
-  snapshot.forEach(child => {
-    const user = child.val();
-    if (user.phone !== "cactus" && user.phone !== userPhone) {
-      const isOnline = onlineList.includes(user.phone);
-      users.push({ ...user, isOnline });
-    }
+      for (const phone in usersData) {
+        const user = usersData[phone];
+        if (!user || user.phone === "cactus" || user.phone === userPhone) continue;
+        user.isOnline = !!online[user.phone];
+        users.push(user);
+      }
+
+      // অনলাইনরা আগে
+      users.sort((a, b) => b.isOnline - a.isOnline);
+
+      userList.innerHTML = "";
+      users.forEach(user => {
+        const tr = document.createElement("tr");
+        tr.className = user.isOnline ? "online" : "offline";
+        tr.innerHTML = `<td style="cursor:pointer">${user.name}</td>`;
+        tr.onclick = () => startChat(user);
+        userList.appendChild(tr);
+      });
+    });
   });
+}
+loadUsers();
 
-  users.sort((a, b) => b.isOnline - a.isOnline);
-
-  userList.innerHTML = "";
-  users.forEach(user => {
-    const tr = document.createElement("tr");
-    tr.className = user.isOnline ? "online" : "offline";
-    tr.innerHTML = `<td style="cursor:pointer">${user.name}</td>`;
-    tr.onclick = () => startChat(user);
-    userList.appendChild(tr);
-  });
-});
-
+// ✅ Start Chat
 function startChat(user) {
-  chattingWith = user;
-  chatWith.textContent = user.name;
+  currentChatUser = user;
   chatBox.style.display = "block";
-  messagesDiv.innerHTML = "লোড হচ্ছে...";
+  chatWith.textContent = `চ্যাট করছেন: ${user.name}`;
+  messagesDiv.innerHTML = "";
 
-  const chatId = userPhone < user.phone ? `${userPhone}_${user.phone}` : `${user.phone}_${userPhone}`;
+  const chatId = getChatId(userPhone, user.phone);
   const chatRef = ref(db, `messages/${chatId}`);
-
   onValue(chatRef, (snapshot) => {
     messagesDiv.innerHTML = "";
     snapshot.forEach((child) => {
@@ -86,22 +87,27 @@ function startChat(user) {
 
       messagesDiv.appendChild(div);
     });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
 }
 
+// ✅ Send message
 window.sendMessage = function () {
-  const text = chatInput.value.trim();
-  if (!text || !chattingWith) return;
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if (!text || !currentChatUser) return;
 
-  const toPhone = chattingWith.phone;
-  const chatId = userPhone < toPhone ? `${userPhone}_${toPhone}` : `${toPhone}_${userPhone}`;
-
-  push(ref(db, `messages/${chatId}`), {
+  const chatId = getChatId(userPhone, currentChatUser.phone);
+  const chatRef = ref(db, `messages/${chatId}`);
+  push(chatRef, {
     text,
     from: userPhone,
-    to: toPhone,
-    time: Date.now()
+    timestamp: serverTimestamp()
   });
 
-  chatInput.value = "";
+  input.value = "";
 };
+
+function getChatId(a, b) {
+  return [a, b].sort().join("_");
+}
