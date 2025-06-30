@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>পোস্ট ও মন্তব্য</title>
+</head>
+<body>
+  <h2>নতুন পোস্ট করুন</h2>
+  <textarea id="postText" rows="4" cols="50" placeholder="আপনার পোস্ট লিখুন"></textarea><br>
+  <button onclick="createPost()">পোস্ট করুন</button>
+
+  <h2>সব পোস্ট</h2>
+  <div id="postList"></div>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/posts.js"></script>
+</body>
+</html>
