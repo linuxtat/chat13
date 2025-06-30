@@ -10,17 +10,52 @@
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     th { background-color: #f0f0f0; }
-    #chatBox { margin-top: 20px; display: none; }
-    #messages { max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; }
-    .message { margin: 5px 0; }
-    .mine { text-align: right; }
-    .delete-btn { color: red; cursor: pointer; margin-left: 10px; }
+    #chatBox {
+      margin-top: 20px;
+      display: none;
+      border: 1px solid #999;
+      padding: 15px;
+      max-width: 600px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+    }
+    #messages {
+      max-height: 400px;
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .message {
+      margin: 5px 0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-block;
+      max-width: 80%;
+    }
+    .mine {
+      background-color: #d0f0c0;
+      text-align: right;
+      float: right;
+      clear: both;
+    }
+    .theirs {
+      background-color: #f0f0f0;
+      float: left;
+      clear: both;
+    }
+    .delete-btn {
+      color: red;
+      cursor: pointer;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
   <div id="navButtons"></div>
-  <h2>স্বাগতম, <span id="userName"></span></h2>
-  <p><a href="logout.html">লগআউট করুন</a></p>
 
   <h3>সদস্য তালিকা</h3>
   <table>
