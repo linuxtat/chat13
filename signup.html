@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>সাইন আপ</title>
+</head>
+<body>
+  <div id="navButtons"></div>
+
+  <h2>সাইন আপ</h2>
+  <input type="text" id="signupName" placeholder="নাম"><br>
+  <input type="text" id="signupPhone" placeholder="মোবাইল নাম্বার"><br>
+  <button onclick="handleSignup()">সাবমিট</button>
+
+  <p id="signupMessage"></p>
+  <p>লগ ইন করতে চান? <a href="index.html">লগ ইন করুন</a></p>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script src="./js/nav.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+</body>
+</html>
