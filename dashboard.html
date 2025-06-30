@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>ইউজার ড্যাশবোর্ড</title>
+  <style>
+    body { font-family: sans-serif; }
+    .online { color: green; font-weight: bold; }
+    .offline { color: black; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f0f0f0; }
+    #chatBox { margin-top: 20px; display: none; }
+    #messages { max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; }
+    .message { margin: 5px 0; }
+    .mine { text-align: right; }
+    .delete-btn { color: red; cursor: pointer; margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <div id="navButtons"></div>
+  <h2>স্বাগতম, <span id="userName"></span></h2>
+  <p><a href="logout.html">লগআউট করুন</a></p>
+
+  <h3>সদস্য তালিকা</h3>
+  <table>
+    <thead>
+      <tr><th>নাম</th></tr>
+    </thead>
+    <tbody id="userList"></tbody>
+  </table>
+
+  <div id="chatBox">
+    <h3>চ্যাট: <span id="chatWith"></span></h3>
+    <div id="messages"></div>
+    <input type="text" id="chatInput" placeholder="মেসেজ লিখুন">
+    <button onclick="sendMessage()">পাঠান</button>
+  </div>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script src="./js/nav.js"></script>
+  <script type="module" src="./js/dashboard.js"></script>
+</body>
+</html>
