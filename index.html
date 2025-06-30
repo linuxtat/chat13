@@ -2,22 +2,43 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <title>লগইন পেজ</title>
+  <title>হোমপেজ</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-buttons {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-buttons button {
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+  </style>
 </head>
 <body>
-  <h2>নাম ও মোবাইল নম্বর দিয়ে লগইন করুন</h2>
-
-  <input type="text" id="loginName" placeholder="আপনার নাম"><br><br>
-  <input type="text" id="loginPhone" placeholder="মোবাইল নম্বর"><br><br>
-  <button onclick="handleLogin()">লগইন করুন</button>
+  <div class="nav-buttons">
+    <button onclick="history.back()">◀️ Back</button>
+    <button onclick="history.forward()">▶️ Forward</button>
+    <button onclick="location.reload()">🔄 Reload</button>
+  </div>
 
   <script type="module" src="./js/firebase.js"></script>
-  <script type="module" src="./js/login.js"></script>
-  <nav>
-  <a href="chat.html">💬 চ্যাট</a> |
-  <a href="posts.html">📝 পোস্ট</a> |
-  <a href="admin.html">🛠️ এডমিন</a>
-</nav>
-
 </body>
 </html>
