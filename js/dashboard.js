@@ -1,4 +1,3 @@
-// js/dashboard.js
 import { db } from "./firebase.js";
 import {
   ref,
@@ -6,8 +5,7 @@ import {
   set,
   remove,
   push,
-  get,
-  child
+  get
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const userName = localStorage.getItem("userName");
@@ -19,7 +17,7 @@ if (!userName || !userPhone || isAdmin) {
   window.location.href = "index.html";
 }
 
-document.getElementById("userName").textContent = userName;
+document.getElementById("userName")?.textContent = userName;
 
 const userList = document.getElementById("userList");
 const chatBox = document.getElementById("chatBox");
@@ -28,13 +26,13 @@ const messagesDiv = document.getElementById("messages");
 const chatInput = document.getElementById("chatInput");
 let chattingWith = null;
 
-// অনলাইন স্ট্যাটাস আপডেট করুন
+// অনলাইন স্ট্যাটাস
 set(ref(db, `onlineUsers/${userPhone}`), true);
 window.addEventListener("beforeunload", () => {
   remove(ref(db, `onlineUsers/${userPhone}`));
 });
 
-// ইউজার তালিকা লোড করুন
+// ইউজার লোড
 onValue(ref(db, "users"), async (snapshot) => {
   const onlineSnap = await get(ref(db, "onlineUsers"));
   const onlineList = onlineSnap.exists() ? Object.keys(onlineSnap.val()) : [];
@@ -42,13 +40,12 @@ onValue(ref(db, "users"), async (snapshot) => {
   let users = [];
   snapshot.forEach(child => {
     const user = child.val();
-    if (user.phone !== "cactus") {
+    if (user.phone !== "cactus" && user.phone !== userPhone) {
       const isOnline = onlineList.includes(user.phone);
       users.push({ ...user, isOnline });
     }
   });
 
-  // অনলাইনেরা আগে
   users.sort((a, b) => b.isOnline - a.isOnline);
 
   userList.innerHTML = "";
@@ -75,10 +72,11 @@ function startChat(user) {
     snapshot.forEach((child) => {
       const msg = child.val();
       const div = document.createElement("div");
-      div.className = "message" + (msg.from === userPhone ? " mine" : "");
-      div.innerHTML = `${msg.text}`;
+      const isMine = msg.from === userPhone;
+      div.className = "message " + (isMine ? "mine" : "theirs");
+      div.textContent = msg.text;
 
-      if (msg.from === userPhone) {
+      if (isMine) {
         const delBtn = document.createElement("span");
         delBtn.textContent = "❌";
         delBtn.className = "delete-btn";
