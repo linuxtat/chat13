@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>লগ ইন</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 100px auto;
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #loginMessage {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="navButtons"></div>
+
+  <div class="container">
+    <h2>লগ ইন করুন</h2>
+    <input type="text" id="loginName" placeholder="নাম লিখুন">
+    <input type="text" id="loginPhone" placeholder="ফোন নম্বর লিখুন">
+    <button onclick="handleLogin()">লগ ইন</button>
+    <p id="loginMessage"></p>
+  </div>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/login.js"></script>
+  <script src="./js/nav.js"></script>
+</body>
+</html>
