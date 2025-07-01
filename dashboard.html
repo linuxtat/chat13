@@ -3,17 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <title>ড্যাশবোর্ড</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #f0f4f8, #e0eafc);
       margin: 0;
-      padding: 30px;
+      padding: 0;
+    }
+
+    #navButtons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffffcc;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    #navButtons .user-info {
+      font-size: 16px;
+      color: #333;
+    }
+
+    #navButtons .nav-btns button {
+      margin-left: 10px;
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #navButtons .nav-btns button:hover {
+      background-color: #0056b3;
     }
 
     .container {
-      max-width: 800px;
-      margin: auto;
+      max-width: 900px;
+      margin: 80px auto 30px auto;
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -23,11 +60,11 @@
     h2 {
       text-align: center;
       color: #333;
+      margin-bottom: 20px;
     }
 
     table {
       width: 100%;
-      margin-top: 20px;
       border-collapse: collapse;
     }
 
@@ -36,6 +73,7 @@
       border-bottom: 1px solid #ddd;
       cursor: pointer;
       font-size: 16px;
+      text-align: left;
     }
 
     tr:hover {
@@ -114,31 +152,65 @@
     }
 
     #chatInput {
-      width: 70%;
+      width: calc(100% - 100px);
       padding: 10px;
       margin-top: 10px;
       border: 1px solid #aaa;
       border-radius: 6px;
     }
 
-    button {
+    #chatInput:focus {
+      outline: 2px solid #007bff33;
+    }
+
+    button.send-btn {
       padding: 10px 16px;
       background: #007bff;
       color: white;
       border: none;
       border-radius: 6px;
       font-size: 14px;
+      margin-top: 10px;
       margin-left: 10px;
       cursor: pointer;
     }
 
-    button:hover {
+    button.send-btn:hover {
       background: #0056b3;
+    }
+
+    @media (max-width: 600px) {
+      #chatInput {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      button.send-btn {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      #navButtons {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #navButtons .nav-btns {
+        margin-top: 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="navButtons"></div>
+  <div id="navButtons">
+    <div class="user-info" id="userInfo">ইউজার: <span id="userNameDisplay"></span></div>
+    <div class="nav-btns">
+      <button onclick="goBack()">← ব্যাক</button>
+      <button onclick="reloadPage()">↻ রিফ্রেশ</button>
+      <button onclick="logout()">লগ আউট</button>
+    </div>
+  </div>
+
   <div class="container">
     <h2>সদস্য তালিকা</h2>
     <table>
@@ -150,14 +222,34 @@
       <h3 id="chatWith"></h3>
       <div id="typingStatus"></div>
       <div id="messages"></div>
-      <input type="text" id="chatInput" placeholder="মেসেজ লিখুন..." />
-      <button onclick="sendMessage()">পাঠান</button>
+      <div style="display: flex; flex-wrap: wrap; align-items: center;">
+        <input type="text" id="chatInput" placeholder="মেসেজ লিখুন..." />
+        <button class="send-btn" onclick="sendMessage()">পাঠান</button>
+      </div>
     </div>
   </div>
 
-  <!-- Your JS files -->
+  <!-- JavaScript files -->
   <script type="module" src="./js/firebase.js"></script>
   <script src="./js/nav.js"></script>
   <script type="module" src="./js/dashboard.js"></script>
+  <script>
+    // Auto fill user name
+    const userName = localStorage.getItem("userName") || "অজানা";
+    document.getElementById("userNameDisplay").textContent = userName;
+
+    function goBack() {
+      history.back();
+    }
+
+    function reloadPage() {
+      location.reload();
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "./login.html";
+    }
+  </script>
 </body>
 </html>
