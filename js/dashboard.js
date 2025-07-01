@@ -14,7 +14,6 @@ const messagesDiv = document.getElementById("messages");
 const chatWith = document.getElementById("chatWith");
 const chatInput = document.getElementById("chatInput");
 const typingStatus = document.getElementById("typingStatus");
-const notificationSound = document.getElementById("notificationSound");
 
 let currentChatUser = null;
 let currentChatRef = null;
@@ -76,19 +75,10 @@ function startChat(user) {
       const msg = child.val();
       const isMine = msg.from === userPhone;
 
-      // শুধুমাত্র অন্য কারো নতুন মেসেজে সাউন্ড বাজবে
-      if (!isMine) {
-        if (child.key !== lastMessageKey) {
-          lastMessageKey = child.key;
-
-          if (notificationSound) {
-            notificationSound.volume = 0.2;
-            notificationSound.currentTime = 0;
-            notificationSound.play();
-          }
-
-          if (navigator.vibrate) navigator.vibrate(50);
-        }
+      // ❌ সাউন্ড ও ভাইব্রেশন বাদ
+      if (!isMine && child.key !== lastMessageKey) {
+        lastMessageKey = child.key;
+        // সাউন্ড প্লে ও vibrate এখান থেকে রিমুভ করা হয়েছে
       }
 
       const div = document.createElement("div");
