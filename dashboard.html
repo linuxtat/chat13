@@ -4,96 +4,128 @@
   <meta charset="UTF-8" />
   <title>ড্যাশবোর্ড</title>
   <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef2f5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+      text-align: center;
+    }
+
     table {
-      border-collapse: collapse;
       width: 100%;
+      border-collapse: collapse;
       margin-top: 20px;
     }
 
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 12px;
       text-align: center;
     }
 
-    .online {
-      color: green;
-      font-weight: bold;
-    }
-
-    .offline {
-      color: black;
-    }
+    .online { color: green; font-weight: bold; }
+    .offline { color: #555; }
 
     #chatBox {
-      margin-top: 20px;
       display: none;
-      border: 1px solid #999;
-      padding: 15px;
-      max-width: 600px;
-      background-color: #f9f9f9;
-      border-radius: 8px;
+      margin-top: 30px;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
     }
 
     #messages {
-      max-height: 400px;
-      height: 300px;
+      max-height: 300px;
       overflow-y: auto;
       border: 1px solid #ccc;
       padding: 10px;
-      background: white;
+      background: #fff;
       border-radius: 6px;
       margin-bottom: 10px;
     }
 
     .message {
       margin: 5px 0;
-      padding: 8px 12px;
-      border-radius: 8px;
-      display: inline-block;
-      max-width: 80%;
+      padding: 10px;
+      border-radius: 6px;
+      max-width: 75%;
+      clear: both;
+      position: relative;
     }
 
-    .mine {
-      background-color: #d0f0c0;
-      text-align: right;
-      float: right;
-      clear: both;
-    }
+    .mine { background: #d2f8d2; float: right; }
+    .theirs { background: #e9e9e9; float: left; }
 
-    .theirs {
-      background-color: #f0f0f0;
-      float: left;
-      clear: both;
+    .timestamp {
+      font-size: 10px;
+      color: gray;
+      display: block;
+      margin-top: 2px;
     }
 
     .delete-btn {
-      margin-left: 8px;
+      font-size: 12px;
       color: red;
+      margin-left: 6px;
       cursor: pointer;
+    }
+
+    #chatInput {
+      width: 70%;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #typingStatus {
+      font-style: italic;
+      color: gray;
+      margin-bottom: 5px;
+      height: 18px;
     }
   </style>
 </head>
 <body>
-  <div id="navButtons"></div>
+  <div class="container">
+    <h2>সদস্য তালিকা</h2>
+    <table>
+      <thead><tr><th>নাম</th></tr></thead>
+      <tbody id="userList"></tbody>
+    </table>
 
-  <h2>সদস্য তালিকা</h2>
-  <table>
-    <thead>
-      <tr><th>নাম</th></tr>
-    </thead>
-    <tbody id="userList"></tbody>
-  </table>
-
-  <div id="chatBox">
-    <h3 id="chatWith"></h3>
-    <div id="messages"></div>
-    <input type="text" id="chatInput" placeholder="মেসেজ লিখুন..." />
-    <button onclick="sendMessage()">পাঠান</button>
+    <div id="chatBox">
+      <h3 id="chatWith">চ্যাট</h3>
+      <div id="typingStatus"></div>
+      <div id="messages"></div>
+      <input type="text" id="chatInput" placeholder="মেসেজ লিখুন..." />
+      <button onclick="sendMessage()">পাঠান</button>
+    </div>
   </div>
 
+  <!-- Optional: Simple Beep Sound -->
+  <audio id="notificationSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3" preload="auto"></audio>
+
   <script type="module" src="./js/firebase.js"></script>
-  <script src="./js/nav.js"></script>
   <script type="module" src="./js/dashboard.js"></script>
 </body>
 </html>
