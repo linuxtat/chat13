@@ -90,10 +90,11 @@ function startChat(user) {
 
       messagesDiv.appendChild(div);
 
-      if (!isMine && notificationSound) {
-        notificationSound.play();
-        if (navigator.vibrate) navigator.vibrate(100);
-      }
+      if (!isMine) {
+  if (notificationSound) notificationSound.play();
+  if (navigator.vibrate) navigator.vibrate(100);
+}
+    
     });
 
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
