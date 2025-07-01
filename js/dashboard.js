@@ -67,43 +67,41 @@ function startChat(user) {
   if (currentChatRef) off(currentChatRef);
   currentChatRef = ref(db, `messages/${chatId}`);
 
-  onValue(currentChatRef, (snapshot) => {
-    messagesDiv.innerHTML = "";
-    snapshot.forEach(child => {
-      const msg = child.val();
-      const div = document.createElement("div");
-      const isMine = msg.from === userPhone;
-      div.className = "message " + (isMine ? "mine" : "theirs");
+ onValue(chatRef, (snapshot) => {
+  messagesDiv.innerHTML = "";
+  snapshot.forEach((child) => {
+    const msg = child.val();
+    const div = document.createElement("div");
+    const isMine = msg.from === userPhone;
 
-      div.innerHTML = `
-        ${msg.text}
-        <div class="timestamp">${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : ""}</div>
-      `;
+    div.className = "message " + (isMine ? "mine" : "theirs");
+    div.textContent = msg.text;
 
-      if (isMine) {
-        const delBtn = document.createElement("span");
-        delBtn.textContent = "❌";
-        delBtn.className = "delete-btn";
-        delBtn.onclick = () => remove(ref(db, `messages/${chatId}/${child.key}`));
-        div.appendChild(delBtn);
+    // ✅ শুধু নিজের মেসেজ না হলে সাউন্ড/ভাইব্রেশন
+    if (!isMine) {
+      if (notificationSound) {
+        notificationSound.volume = 0.3;
+        notificationSound.currentTime = 0;
+        notificationSound.play();
       }
+      if (navigator.vibrate) navigator.vibrate(100);
+    }
 
-      messagesDiv.appendChild(div);
+    if (isMine) {
+      const delBtn = document.createElement("span");
+      delBtn.textContent = "❌";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () =>
+        remove(ref(db, `messages/${chatId}/${child.key}`));
+      div.appendChild(delBtn);
+    }
 
-     if (!isMine) {
-  if (notificationSound) {
-    notificationSound.volume = 0.3;
-    notificationSound.currentTime = 0;
-    notificationSound.play();
-  }
-  if (navigator.vibrate) navigator.vibrate(100);
-}
-
-    
-    });
-
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    messagesDiv.appendChild(div);
   });
+
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+});
+
 
   // Typing Indicator
   const typingRef = ref(db, `typing/${user.phone}`);
