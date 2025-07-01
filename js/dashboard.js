@@ -71,8 +71,9 @@ function startChat(user) {
     messagesDiv.innerHTML = "";
     snapshot.forEach(child => {
       const msg = child.val();
-      const div = document.createElement("div");
       const isMine = msg.from === userPhone;
+
+      const div = document.createElement("div");
       div.className = "message " + (isMine ? "mine" : "theirs");
 
       div.innerHTML = `
@@ -81,25 +82,25 @@ function startChat(user) {
       `;
 
       if (!isMine) {
-      if (notificationSound) {
-        notificationSound.volume = 0.3;
-        notificationSound.currentTime = 0;
-        notificationSound.play();
+        // ✅ Only play sound/vibration if message is NOT from self
+        if (notificationSound) {
+          notificationSound.volume = 0.3;
+          notificationSound.currentTime = 0;
+          notificationSound.play();
+        }
+        if (navigator.vibrate) navigator.vibrate(100);
       }
-      if (navigator.vibrate) navigator.vibrate(100);
-    }
 
-    if (isMine) {
-      const delBtn = document.createElement("span");
-      delBtn.textContent = "❌";
-      delBtn.className = "delete-btn";
-      delBtn.onclick = () =>
-        remove(ref(db, `messages/${chatId}/${child.key}`));
-      div.appendChild(delBtn);
+      if (isMine) {
+        const delBtn = document.createElement("span");
+        delBtn.textContent = "❌";
+        delBtn.className = "delete-btn";
+        delBtn.onclick = () =>
+          remove(ref(db, `messages/${chatId}/${child.key}`));
+        div.appendChild(delBtn);
       }
 
       messagesDiv.appendChild(div);
-          
     });
 
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
