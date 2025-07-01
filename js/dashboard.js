@@ -80,12 +80,22 @@ function startChat(user) {
         <div class="timestamp">${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : ""}</div>
       `;
 
-      if (isMine) {
-        const delBtn = document.createElement("span");
-        delBtn.textContent = "❌";
-        delBtn.className = "delete-btn";
-        delBtn.onclick = () => remove(ref(db, `messages/${chatId}/${child.key}`));
-        div.appendChild(delBtn);
+      if (!isMine) {
+      if (notificationSound) {
+        notificationSound.volume = 0.3;
+        notificationSound.currentTime = 0;
+        notificationSound.play();
+      }
+      if (navigator.vibrate) navigator.vibrate(100);
+    }
+
+    if (isMine) {
+      const delBtn = document.createElement("span");
+      delBtn.textContent = "❌";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () =>
+        remove(ref(db, `messages/${chatId}/${child.key}`));
+      div.appendChild(delBtn);
       }
 
       messagesDiv.appendChild(div);
