@@ -99,6 +99,8 @@ function startChat(user) {
       }
 
       messagesDiv.appendChild(div);
+          
+    });
 
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
