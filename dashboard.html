@@ -190,122 +190,21 @@
         margin-left: 0;
       }
 
-    /* সব কিছুর জন্য বক্স মডেল ঠিক রাখা */
-* {
-  box-sizing: border-box;
-}
+      #navButtons {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #f0f4f8, #e0eafc);
-  margin: 0;
-  padding: 0;
-}
-
-/* ন্যাভিগেশন বক্স */
-#navButtons {
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding: 15px 20px;
-  z-index: 999;
-  background: #ffffffcc;
-  border-right: 1px solid #ccc;
-  min-height: 100px;
-}
-
-/* স্বাগতম + লগআউট বাটন */
-#navButtons .top-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-#navButtons .top-left #userInfo {
-  font-size: 16px;
-  color: #333;
-}
-
-#navButtons .top-left button {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#navButtons .top-left button:hover {
-  background: #a71d2a;
-}
-
-/* নিচের তিনটি বাটনের জন্য */
-#navButtons .bottom-left {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-#navButtons .bottom-left button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  width: 120px;
-  text-align: left;
-}
-
-#navButtons .bottom-left button:hover {
-  background: #0056b3;
-}
-
-/* মূল কনটেন্ট নিচে সরানো যাতে fixed nav overlap না করে */
-.container {
-  margin-left: 160px; /* বাম পাশে fixed ন্যাভকে এড়িয়ে কনটেন্ট শুরু হবে */
-  margin-top: 40px;
-  padding: 30px;
-  max-width: 900px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-/* মোবাইলের জন্য responsive */
-@media (max-width: 600px) {
-  #navButtons {
-    position: static;
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .container {
-    margin-left: 0;
-    margin-top: 20px;
-    padding: 20px;
-  }
-
-  #navButtons .bottom-left {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  #navButtons .bottom-left button {
-    width: auto;
+      #navButtons .nav-btns {
+        margin-top: 10px;
       }
     }
   </style>
 </head>
 <body>
   <div id="navButtons">
-    <div class="top-left">
     <div class="user-info" id="userInfo">ইউজার: <span id="userNameDisplay"></span></div>
-   <div class="bottom-left">
-     <div class="nav-btns">
+    <div class="nav-btns">
       <button onclick="goBack()">← ব্যাক</button>
       <button onclick="reloadPage()">↻ রিফ্রেশ</button>
       <button onclick="logout()">লগ আউট</button>
