@@ -1,34 +1,31 @@
 import { db } from "./firebase.js";
 import {
-  ref,
-  onValue,
-  set,
-  remove,
-  push,
-  serverTimestamp
+  ref, onValue, set, remove, push, serverTimestamp, off, update
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const userPhone = localStorage.getItem("userPhone");
 const userName = localStorage.getItem("userName");
-const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-if (!userPhone || !userName) {
-  window.location.href = "index.html";
-}
+if (!userPhone || !userName) window.location.href = "index.html";
 
 const userList = document.getElementById("userList");
 const chatBox = document.getElementById("chatBox");
 const messagesDiv = document.getElementById("messages");
 const chatWith = document.getElementById("chatWith");
-let currentChatUser = null;
+const chatInput = document.getElementById("chatInput");
+const typingStatus = document.getElementById("typingStatus");
+const notificationSound = document.getElementById("notificationSound");
 
-// ✅ Mark as online
+let currentChatUser = null;
+let currentChatRef = null;
+
+// ✅ Online mark
 set(ref(db, `onlineUsers/${userPhone}`), true);
 window.addEventListener("beforeunload", () => {
   remove(ref(db, `onlineUsers/${userPhone}`));
+  remove(ref(db, `typing/${userPhone}`));
 });
 
-// ✅ Show users (excluding self & cactus)
 function loadUsers() {
   onValue(ref(db, "users"), (snapshot) => {
     const usersData = snapshot.val() || {};
@@ -43,9 +40,7 @@ function loadUsers() {
         users.push(user);
       }
 
-      // অনলাইনরা আগে
       users.sort((a, b) => b.isOnline - a.isOnline);
-
       userList.innerHTML = "";
       users.forEach(user => {
         const tr = document.createElement("tr");
@@ -59,24 +54,29 @@ function loadUsers() {
 }
 loadUsers();
 
-// ✅ Start Chat
 function startChat(user) {
   currentChatUser = user;
   chatBox.style.display = "block";
   chatWith.textContent = `চ্যাট করছেন: ${user.name}`;
   messagesDiv.innerHTML = "";
+  typingStatus.textContent = "";
 
   const chatId = getChatId(userPhone, user.phone);
-  const chatRef = ref(db, `messages/${chatId}`);
-  onValue(chatRef, (snapshot) => {
+  if (currentChatRef) off(currentChatRef);
+  currentChatRef = ref(db, `messages/${chatId}`);
+
+  // Listen for messages
+  onValue(currentChatRef, (snapshot) => {
     messagesDiv.innerHTML = "";
     snapshot.forEach((child) => {
       const msg = child.val();
       const div = document.createElement("div");
       const isMine = msg.from === userPhone;
       div.className = "message " + (isMine ? "mine" : "theirs");
-      div.textContent = msg.text;
-
+      div.innerHTML = `
+        ${msg.text}
+        <div class="timestamp">${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : ""}</div>
+      `;
       if (isMine) {
         const delBtn = document.createElement("span");
         delBtn.textContent = "❌";
@@ -84,30 +84,57 @@ function startChat(user) {
         delBtn.onclick = () => remove(ref(db, `messages/${chatId}/${child.key}`));
         div.appendChild(delBtn);
       }
-
       messagesDiv.appendChild(div);
+      if (!isMine) {
+        if (notificationSound) notificationSound.play();
+        if (navigator.vibrate) navigator.vibrate(100);
+      }
     });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
+
+  // Typing indicator
+  const typingRef = ref(db, `typing/${user.phone}`);
+  onValue(typingRef, (snap) => {
+    const isTyping = snap.val();
+    typingStatus.textContent = isTyping ? `${user.name} টাইপ করছেন...` : "";
+  });
 }
 
-// ✅ Send message
+// ✅ Send Message
 window.sendMessage = function () {
-  const input = document.getElementById("chatInput");
-  const text = input.value.trim();
+  const text = chatInput.value.trim();
   if (!text || !currentChatUser) return;
-
   const chatId = getChatId(userPhone, currentChatUser.phone);
-  const chatRef = ref(db, `messages/${chatId}`);
-  push(chatRef, {
+  push(ref(db, `messages/${chatId}`), {
     text,
     from: userPhone,
-    timestamp: serverTimestamp()
+    timestamp: Date.now()
   });
-
-  input.value = "";
+  chatInput.value = "";
+  set(ref(db, `typing/${userPhone}`), false);
 };
 
+// ✅ Chat ID builder
 function getChatId(a, b) {
   return [a, b].sort().join("_");
 }
+
+// ✅ Typing detection
+let typingTimer;
+chatInput.addEventListener("input", () => {
+  if (!currentChatUser) return;
+  set(ref(db, `typing/${userPhone}`), true);
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(() => {
+    set(ref(db, `typing/${userPhone}`), false);
+  }, 2000);
+});
+
+// ✅ Enter key sends message
+chatInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    sendMessage();
+  }
+});
