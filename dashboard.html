@@ -1,75 +1,83 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <title>ইউজার ড্যাশবোর্ড</title>
+  <meta charset="UTF-8" />
+  <title>ড্যাশবোর্ড</title>
   <style>
-    body { font-family: sans-serif; }
-    .online { color: green; font-weight: bold; }
-    .offline { color: black; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background-color: #f0f0f0; }
-    #chatBox {
-      margin-top: 20px;
-      display: none;
-      border: 1px solid #999;
-      padding: 15px;
-      max-width: 600px;
-      background-color: #f9f9f9;
-      border-radius: 8px;
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 0;
     }
-    #messages {
-      max-height: 400px;
-      height: 300px;
-      overflow-y: auto;
-      border: 1px solid #ccc;
-      padding: 10px;
+
+    #navButtons {
+      margin: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
       background: white;
-      border-radius: 6px;
-      margin-bottom: 10px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
     }
-    .message {
-      margin: 5px 0;
-      padding: 8px 12px;
-      border-radius: 8px;
-      display: inline-block;
-      max-width: 80%;
+
+    h2 {
+      text-align: center;
+      color: #333;
     }
-    .mine {
-      background-color: #d0f0c0;
+
+    #welcome {
       text-align: right;
-      float: right;
-      clear: both;
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 20px;
     }
-    .theirs {
-      background-color: #f0f0f0;
-      float: left;
-      clear: both;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    .delete-btn {
-      color: red;
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .online {
+      color: green;
+      font-weight: bold;
+    }
+
+    .offline {
+      color: gray;
+    }
+
+    .user-row:hover {
+      background-color: #f9f9f9;
       cursor: pointer;
-      margin-left: 10px;
     }
   </style>
 </head>
 <body>
   <div id="navButtons"></div>
 
-  <h3>সদস্য তালিকা</h3>
-  <table>
-    <thead>
-      <tr><th>নাম</th></tr>
-    </thead>
-    <tbody id="userList"></tbody>
-  </table>
-
-  <div id="chatBox">
-    <h3>চ্যাট: <span id="chatWith"></span></h3>
-    <div id="messages"></div>
-    <input type="text" id="chatInput" placeholder="মেসেজ লিখুন">
-    <button onclick="sendMessage()">পাঠান</button>
+  <div class="container">
+    <div id="welcome">স্বাগতম, <span id="userName"></span>!</div>
+    <h2>সদস্য তালিকা</h2>
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>নাম</th>
+        </tr>
+      </thead>
+      <tbody id="userList">
+        <!-- ইউজার লিস্ট JS দিয়ে বসবে -->
+      </tbody>
+    </table>
   </div>
 
   <script type="module" src="./js/firebase.js"></script>
