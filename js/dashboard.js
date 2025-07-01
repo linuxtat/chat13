@@ -82,12 +82,12 @@ function startChat(user) {
           lastMessageKey = child.key;
 
           if (notificationSound) {
-            notificationSound.volume = 0.3;
+            notificationSound.volume = 0.2;
             notificationSound.currentTime = 0;
             notificationSound.play();
           }
 
-          if (navigator.vibrate) navigator.vibrate(100);
+          if (navigator.vibrate) navigator.vibrate(50);
         }
       }
 
