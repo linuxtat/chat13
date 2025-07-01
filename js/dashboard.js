@@ -1,4 +1,3 @@
-
 import { db } from "./firebase.js";
 import {
   ref, onValue, set, remove, push, serverTimestamp, off
@@ -91,15 +90,10 @@ function startChat(user) {
 
       messagesDiv.appendChild(div);
 
-     if (!isMine) {
-  if (notificationSound) {
-    notificationSound.volume = 0.3;
-    notificationSound.currentTime = 0;
-    notificationSound.play();
-  }
+      if (!isMine) {
+  if (notificationSound) notificationSound.play();
   if (navigator.vibrate) navigator.vibrate(100);
 }
-
     
     });
 
