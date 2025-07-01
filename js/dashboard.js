@@ -100,10 +100,7 @@ function startChat(user) {
 
       messagesDiv.appendChild(div);
 
-      if (!isMine) {
-  if (notificationSound) notificationSound.play();
-  if (navigator.vibrate) navigator.vibrate(100);
-}
+      
     
     });
 
