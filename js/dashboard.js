@@ -66,23 +66,30 @@ function startChat(user) {
 
   if (currentChatRef) off(currentChatRef);
   currentChatRef = ref(db, `messages/${chatId}`);
-let lastMessageKey = null;
+
+  let lastMessageKey = null;
+
   onValue(currentChatRef, (snapshot) => {
     messagesDiv.innerHTML = "";
+
     snapshot.forEach(child => {
       const msg = child.val();
       const isMine = msg.from === userPhone;
-if (!isMine && child.key !== lastMessageKey) {
-  lastMessageKey = child.key;
 
-  if (notificationSound) {
-    notificationSound.volume = 0.3;
-    notificationSound.currentTime = 0;
-    notificationSound.play();
-  }
+      // শুধুমাত্র অন্য কারো নতুন মেসেজে সাউন্ড বাজবে
+      if (!isMine) {
+        if (child.key !== lastMessageKey) {
+          lastMessageKey = child.key;
 
-  if (navigator.vibrate) navigator.vibrate(100);
-}
+          if (notificationSound) {
+            notificationSound.volume = 0.3;
+            notificationSound.currentTime = 0;
+            notificationSound.play();
+          }
+
+          if (navigator.vibrate) navigator.vibrate(100);
+        }
+      }
 
       const div = document.createElement("div");
       div.className = "message " + (isMine ? "mine" : "theirs");
@@ -92,7 +99,6 @@ if (!isMine && child.key !== lastMessageKey) {
         <div class="timestamp">${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : ""}</div>
       `;
 
-      
       if (isMine) {
         const delBtn = document.createElement("span");
         delBtn.textContent = "❌";
