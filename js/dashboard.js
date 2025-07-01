@@ -66,12 +66,23 @@ function startChat(user) {
 
   if (currentChatRef) off(currentChatRef);
   currentChatRef = ref(db, `messages/${chatId}`);
-
+let lastMessageKey = null;
   onValue(currentChatRef, (snapshot) => {
     messagesDiv.innerHTML = "";
     snapshot.forEach(child => {
       const msg = child.val();
       const isMine = msg.from === userPhone;
+if (!isMine && child.key !== lastMessageKey) {
+  lastMessageKey = child.key;
+
+  if (notificationSound) {
+    notificationSound.volume = 0.3;
+    notificationSound.currentTime = 0;
+    notificationSound.play();
+  }
+
+  if (navigator.vibrate) navigator.vibrate(100);
+}
 
       const div = document.createElement("div");
       div.className = "message " + (isMine ? "mine" : "theirs");
